@@ -4,6 +4,8 @@
 
 ## 学习数学
 
+希望未来出现更多`中专生姜萍`这种不是为了考学而读书的人。
+
 ### 小学数学
 - [一年级上册](https://github.com/TapXWorld/ChinaTextbook/blob/master/%E5%B0%8F%E5%AD%A6/%E6%95%B0%E5%AD%A6/%E4%BA%BA%E6%95%99%E7%89%88/%E4%B9%89%E5%8A%A1%E6%95%99%E8%82%B2%E6%95%99%E7%A7%91%E4%B9%A6%20%C2%B7%20%E6%95%B0%E5%AD%A6%E4%B8%80%E5%B9%B4%E7%BA%A7%E4%B8%8A%E5%86%8C.pdf)
 - [一年级下册](https://github.com/TapXWorld/ChinaTextbook/blob/master/%E5%B0%8F%E5%AD%A6/%E6%95%B0%E5%AD%A6/%E4%BA%BA%E6%95%99%E7%89%88/%E4%B9%89%E5%8A%A1%E6%95%99%E8%82%B2%E6%95%99%E7%A7%91%E4%B9%A6%C2%B7%E6%95%B0%E5%AD%A6%E4%B8%80%E5%B9%B4%E7%BA%A7%E4%B8%8B%E5%86%8C.pdf)
@@ -37,7 +39,7 @@
 - [离散数学](https://github.com/TapXWorld/ChinaTextbook/tree/master/%E5%A4%A7%E5%AD%A6/%E7%A6%BB%E6%95%A3%E6%95%B0%E5%AD%A6)
 - [概率论](https://github.com/TapXWorld/ChinaTextbook/tree/master/%E5%A4%A7%E5%AD%A6/%E6%A6%82%E7%8E%87%E8%AE%BA)
 
-
+##
 
 ## 问题：如何合并被拆分的文件？
 
@@ -70,7 +72,7 @@
 
 ## 支持我
 
-如果您觉得这个项目对您有帮助，欢迎通过支付宝支持我。您可以扫描以下二维码进行捐赠：
+如果您觉得这个项目对您有帮助，您可以扫描以下二维码进行捐赠：
 <p align="left">
   <img src=".cache/support-alipay.png" width="20%">
 </p>
