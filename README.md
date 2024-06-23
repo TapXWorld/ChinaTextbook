@@ -39,6 +39,9 @@
 - [离散数学](https://github.com/TapXWorld/ChinaTextbook/tree/master/%E5%A4%A7%E5%AD%A6/%E7%A6%BB%E6%95%A3%E6%95%B0%E5%AD%A6)
 - [概率论](https://github.com/TapXWorld/ChinaTextbook/tree/master/%E5%A4%A7%E5%AD%A6/%E6%A6%82%E7%8E%87%E8%AE%BA)
 
+- [更多数学资料-(大学数学网)](http://www.dxsx.net/index.php)
+
+
 ##
 
 ## 问题：如何合并被拆分的文件？
