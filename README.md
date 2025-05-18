@@ -39,11 +39,10 @@
 - [线性代数](https://github.com/TapXWorld/ChinaTextbook/tree/master/%E5%A4%A7%E5%AD%A6/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0)
 - [离散数学](https://github.com/TapXWorld/ChinaTextbook/tree/master/%E5%A4%A7%E5%AD%A6/%E7%A6%BB%E6%95%A3%E6%95%B0%E5%AD%A6)
 - [概率论](https://github.com/TapXWorld/ChinaTextbook/tree/master/%E5%A4%A7%E5%AD%A6/%E6%A6%82%E7%8E%87%E8%AE%BA)
+- [微积分](https://github.com/TapXWorld/ChinaTextbook/tree/master/%E5%A4%A7%E5%AD%A6/%E5%BE%AE%E7%A7%AF%E5%88%86)
 
 - [更多数学资料-(大学数学网)](http://www.dxsx.net/index.php)
 
-
-##
 
 ## 问题：如何合并被拆分的文件？
 
@@ -80,6 +79,13 @@
 如果这个项目帮助您免费获取教育资源，请考虑支持我们推广开放教育的努力！您的捐献将帮助我们维护和扩展这个资源库。
 
 加入我们的 Telegram 社区，获取最新动态并分享您的想法：https://t.me/+1V6WjEq8WEM4MDM1
+
+## 问题：仓库太大无法 clone ？
+您可以通过 GitHub 网页版进行操作：
+1. fork 到个人仓库
+2. 进入目录
+3. 点击 upload files （在 Add file 按钮里面）
+4. 上传文件
 
 
 ## 支持我
