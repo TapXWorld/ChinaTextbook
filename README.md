@@ -56,17 +56,17 @@
 
 ### 解决办法
 
-#### Windows
-要合并这些被拆分的文件，您只需执行以下步骤(其他操作系统同理)：
-1. 将合并程序 `mergePDFs-windows-amd64.exe` 下载到包含 PDF 文件的文件夹中。
-2. 确保 `mergePDFs-windows-amd64.exe` 和被拆分的 PDF 文件在同一目录下。
-3. 双击 `mergePDFs-windows-amd64.exe` 程序即可自动完成文件合并。
-
 #### Mac OS
 无须下载任何软件，直接使用cat命令进行合并：
 1. 将文件重新命名为file.1、file.2，因为原文件中包含空格
 2. 运行命令：cat file.1 file.2 > file.pdf
 3. 将文件重命名为：义务教育教科书 · 数学一年级上册.pdf
+
+#### Windows
+要合并这些被拆分的文件，您只需执行以下步骤(其他操作系统同理)：
+1. 将合并程序 `mergePDFs-windows-amd64.exe` 下载到包含 PDF 文件的文件夹中。
+2. 确保 `mergePDFs-windows-amd64.exe` 和被拆分的 PDF 文件在同一目录下。
+3. 双击 `mergePDFs-windows-amd64.exe` 程序即可自动完成文件合并。
 
 ### 下载方式
 您可以通过以下链接，下载文件合并程序：
