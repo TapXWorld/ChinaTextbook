@@ -81,6 +81,10 @@
 
 加入我们的 Telegram 社区，获取最新动态并分享您的想法：https://t.me/+1V6WjEq8WEM4MDM1
 
+## Star History
+
+[![Star History](https://api.star-history.com/svg?repos=TapXWorld/ChinaTextbook&type=Date)](https://star-history.com/#TapXWorld/ChinaTextbook&Date)
+
 
 ## 支持我
 
