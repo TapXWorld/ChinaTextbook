@@ -84,11 +84,3 @@
 ## Star History
 
 [![Star History](https://api.star-history.com/svg?repos=TapXWorld/ChinaTextbook&type=Date)](https://star-history.com/#TapXWorld/ChinaTextbook&Date)
-
-
-## 支持我
-
-如果您觉得这个项目对您有帮助，您可以扫描以下二维码进行捐赠：
-<p align="left">
-  <img src=".cache/support-alipay.png" width="20%">
-</p>
