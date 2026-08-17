@@ -49,28 +49,42 @@
 
 由于 GitHub 对单个文件的上传有最大限制，超过 100MB 的文件会被拒绝上传，超过 50MB 的文件上传时会收到警告。因此，文件大小超过 50MB 的文件会被拆分成每个 35MB 的多个文件。
 
-### 示例
-文件被拆分的示例：
-- 义务教育教科书 · 数学一年级上册.pdf.1
-- 义务教育教科书 · 数学一年级上册.pdf.2
+分片是按字节顺序直接切割的（类似分卷压缩），不涉及 PDF 内部结构，按序号拼接即可还原为与原文件完全一致的单个 PDF。分片有时位于专门的 `xxx.pdf_merge_folder/` 子目录中，有时直接与其他文件同目录；另有少数书籍同时存在「整本 PDF」与「分片」两种形式（内容一致），任取其一即可，无需合并。
 
-### 解决办法
-要合并这些被拆分的文件，您只需执行以下步骤(其他操作系统同理)：
-1. 将合并程序 `mergePDFs-windows-amd64.exe` 下载到包含 PDF 文件的文件夹中。
-2. 确保 `mergePDFs-windows-amd64.exe` 和被拆分的 PDF 文件在同一目录下。
-3. 双击 `mergePDFs-windows-amd64.exe` 程序即可自动完成文件合并。
+### 一键脚本
 
-### 下载方式
-您可以通过以下链接，下载文件合并程序：
+本仓库根目录提供两个脚本，放到需要处理的目录（或其上级目录）中运行即可递归合并所有分片，已存在整本的书籍会自动跳过：
 
-[下载文件合并程序](https://github.com/TapXWorld/ChinaTextbook-tools/releases)
+- Windows：双击 `mergePDFs.bat`
+- macOS / Linux：`sh mergePDFs.sh`
 
+### 手动合并（Windows）
+
+使用系统自带的 `copy /b`（分片多于两个时按 `.1` `.2` `.3` … 顺序依次相加）：
+
+```bat
+copy /b "义务教育教科书·数学一年级上册.pdf.1"+"义务教育教科书·数学一年级上册.pdf.2" "义务教育教科书·数学一年级上册.pdf"
+```
+
+### 手动合并（macOS / Linux）
+
+使用系统自带的 `cat`（分片多于两个时按顺序全部列出）：
+
+```bash
+cat "义务教育教科书·数学一年级上册.pdf.1" "义务教育教科书·数学一年级上册.pdf.2" > "义务教育教科书·数学一年级上册.pdf"
+```
+
+### 图形化合并程序（Windows）
+
+将 `mergePDFs-windows-amd64.exe` 下载到包含 PDF 文件的文件夹中，双击即可自动完成文件合并。
+
+下载地址：[下载文件合并程序](https://github.com/TapXWorld/ChinaTextbook-tools/releases)
 
 ### 文件和程序示例
-- mergePDFs-windows-amd64.exe
-- 义务教育教科书 · 数学一年级上册.pdf.1
-- 义务教育教科书 · 数学一年级上册.pdf.2
 
+- mergePDFs-windows-amd64.exe
+- 义务教育教科书·数学一年级上册.pdf.1
+- 义务教育教科书·数学一年级上册.pdf.2
 
 ## 重新下载
 - 如果您位于内地，并且网络不错，想重新下载，您可以使用 [tchMaterial-parser](https://github.com/happycola233/tchMaterial-parser) 项目（鼓励开源），进行重新下载。
