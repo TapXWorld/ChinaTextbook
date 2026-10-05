@@ -74,9 +74,28 @@
 
 ## 重新下载
 
-**如果只是下载和阅读教材，不参与项目维护，也不需要 Git 历史或通过 Git 同步更新，无需使用 `git clone`，也无需下载 `.git` 目录。** 可以在 GitHub 文件页面下载所需教材，或通过仓库首页的 **Code → Download ZIP** 下载当前版本（不包含 `.git` 和提交历史）。整个仓库体积较大，建议优先按需下载；下载分块文件时，请下载同一本教材的全部分块，并按上文说明合并。
+### 下载全部教材（无需 Git，无需压缩包）
 
-使用 `git clone` 会同时保存 `.git` 中的文件对象和历史，以及工作目录中可直接打开的教材文件。PDF 等文件通常难以进一步压缩，因此完整克隆并检出会额外占用大量磁盘空间。只有需要参与维护、查看历史或通过 Git 同步更新时，才建议克隆仓库。
+**如果只是下载和阅读全部教材，不需要维护项目、查看提交历史或通过 Git 同步更新，无需 `git clone`，也无需下载 `.git`。** 可以使用本仓库的批量下载脚本，直接将当前版本的全部文件按原目录结构保存到本地，不下载 ZIP，不生成 `.git`。
+
+需要 Python 3.9 或更高版本，无需安装额外 Python 依赖。在终端运行：
+
+```bash
+curl -fL https://raw.githubusercontent.com/TapXWorld/ChinaTextbook/master/download_textbooks.py -o download_textbooks.py
+python3 download_textbooks.py ChinaTextbook
+```
+
+也可以手动保存 [download_textbooks.py](download_textbooks.py)，再执行第二条命令。`ChinaTextbook` 是目标目录，可替换为其他路径。全部文件体积为数十 GB，请预留足够空间。脚本通过 GitHub API 获取文件清单，再逐个下载原始文件；需要能访问 `api.github.com` 和 `raw.githubusercontent.com`。
+
+脚本会校验下载内容，中断后重新运行相同命令，会跳过已经下载且校验通过的完整文件，未完成的单个文件会重新下载。遇到目标目录中已有但内容不同的文件，会报告错误而不覆盖；建议使用新的下载目录。教材中的 `.pdf.1`、`.pdf.2` 等分块会原样下载，下载后仍需按上文说明合并。
+
+### 只下载个别教材
+
+可以直接在 GitHub 文件页面下载所需教材；如果教材被拆分，请下载该教材的全部分块后合并。
+
+### 需要 Git 或从其他来源下载
+
+使用 `git clone` 会同时保存 `.git` 中的文件对象和历史，以及工作目录中可直接打开的教材文件。PDF 等文件通常难以进一步压缩，因此完整克隆并检出会额外占用大量磁盘空间。需要参与维护、查看历史或通过 Git 同步更新时，可以克隆仓库。
 
 - 如果您位于内地，并且网络不错，想重新下载，您可以使用 [tchMaterial-parser](https://github.com/happycola233/tchMaterial-parser) 项目（鼓励开源），进行重新下载。
 - 如果您位于国外，和内地网络通信速度较慢，可以按上述方式从本仓库下载；需要使用 Git 的用户也可以克隆并签出。
