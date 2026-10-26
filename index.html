@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub 仓库文件管理器</title>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --surface: #161b22;
+            --border: #30363d;
+            --text: #c9d1d9;
+            --text-secondary: #8b949e;
+            --accent: #58a6ff;
+            --accent-hover: #79c0ff;
+            --danger: #f85149;
+            --success: #3fb950;
+            --radius: 8px;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            padding: 1.5rem;
+            max-width: 960px;
+            margin: 0 auto;
+        }
+        h1 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-bottom: 1.25rem;
+        }
+
+        /* 配置区 */
+        .config {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1rem;
+            margin-bottom: 1.25rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 0.75rem;
+            align-items: end;
+        }
+        .config label {
+            display: block;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+        }
+        .config input {
+            width: 100%;
+            padding: 0.45rem 0.6rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-size: 0.85rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .config input:focus { border-color: var(--accent); }
+        .config .full { grid-column: 1 / -1; }
+        .btn {
+            padding: 0.45rem 1rem;
+            background: var(--accent);
+            color: #0d1117;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+        .btn:hover { background: var(--accent-hover); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-outline {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        .btn-outline:hover { background: var(--surface); border-color: var(--text-secondary); }
+
+        /* 面包屑 */
+        .breadcrumb {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+        .breadcrumb .crumb {
+            color: var(--accent);
+            cursor: pointer;
+            padding: 0.15rem 0.35rem;
+            border-radius: 4px;
+            transition: background 0.15s;
+        }
+        .breadcrumb .crumb:hover { background: var(--surface); }
+        .breadcrumb .sep { color: var(--text-secondary); opacity: 0.6; }
+        .breadcrumb .current { color: var(--text); font-weight: 500; }
+
+        /* 文件列表 */
+        .file-list {
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            background: var(--surface);
+        }
+        .file-item {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            padding: 0.6rem 0.85rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.88rem;
+            cursor: default;
+            transition: background 0.15s;
+        }
+        .file-item:last-child { border-bottom: none; }
+        .file-item:hover { background: rgba(88, 166, 255, 0.06); }
+        .file-item.dir { cursor: pointer; }
+        .file-item .icon { flex-shrink: 0; width: 20px; text-align: center; font-size: 1rem; }
+        .file-item .name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .file-item .size { color: var(--text-secondary); font-size: 0.78rem; flex-shrink: 0; }
+        .file-item .actions { display: flex; gap: 0.4rem; flex-shrink: 0; }
+        .file-item .actions .btn { padding: 0.2rem 0.65rem; font-size: 0.75rem; }
+
+        /* 状态 */
+        .status { padding: 2rem; text-align: center; color: var(--text-secondary); font-size: 0.88rem; }
+        .status.error { color: var(--danger); }
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            margin-right: 0.5rem;
+            vertical-align: middle;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* 提示 */
+        .hint {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            margin-top: 0.75rem;
+            padding: 0.6rem 0.85rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            line-height: 1.6;
+        }
+        .hint code {
+            background: var(--bg);
+            padding: 0.1rem 0.35rem;
+            border-radius: 4px;
+            font-size: 0.78rem;
+            word-break: break-all;
+        }
+
+        @media (max-width: 600px) {
+            body { padding: 1rem; }
+            .config { grid-template-columns: 1fr; }
+            .file-item .size { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>📂 GitHub 仓库文件管理器</h1>
+    <p class="subtitle">浏览文件夹结构 · 下载文件 · 纯前端运行，兼容 Cloudflare Pages</p>
+
+    <!-- 配置区 -->
+    <div class="config">
+        <div>
+            <label for="owner">仓库所有者</label>
+            <input type="text" id="owner" placeholder="例如: facebook" value="">
+        </div>
+        <div>
+            <label for="repo">仓库名称</label>
+            <input type="text" id="repo" placeholder="例如: react" value="">
+        </div>
+        <div>
+            <label for="branch">分支 / 标签 / 提交</label>
+            <input type="text" id="branch" placeholder="留空则自动检测默认分支" value="">
+        </div>
+        <div>
+            <label for="token">Personal Access Token（可选）</label>
+            <input type="password" id="token" placeholder="提高 API 速率限制 / 访问私有仓库">
+        </div>
+        <div class="full">
+            <button class="btn" id="loadBtn">🔍 加载仓库</button>
+            <span id="rateHint" style="font-size:0.75rem; color:var(--text-secondary); margin-left:0.75rem;"></span>
+        </div>
+    </div>
+
+    <!-- 面包屑 -->
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <!-- 文件列表 -->
+    <div class="file-list" id="fileList">
+        <div class="status">请输入仓库信息后点击「加载仓库」</div>
+    </div>
+
+    <!-- 说明 -->
+    <div class="hint">
+        💡 <strong>下载说明</strong>：文件下载优先使用 <code>raw.githubusercontent.com</code> 直链。
+        如果下载失败或速度较慢，可尝试在地址前加上 <code>https://cdn.jsdelivr.net/gh/所有者/仓库@分支/</code> 路径使用 jsDelivr CDN 加速[reference:0]。
+        <br>
+        ⚠️ <strong>速率限制</strong>：未填写 Token 时 GitHub API 每小时仅允许 60 次请求。Token 仅保存在当前页面内存中，不会被持久化或上传。
+    </div>
+
+    <script>
+    (function() {
+        'use strict';
+
+        // ---------- 状态 ----------
+        const state = {
+            owner: '',
+            repo: '',
+            branch: '',        // 用户填写的分支；空字符串表示自动检测
+            token: '',
+            currentPath: '',   // 当前文件夹路径，根目录为空字符串
+            loading: false,
+            tree: null,        // 可选的完整递归树缓存（暂未使用，保留扩展）
+        };
+
+        // ---------- DOM ----------
+        const $owner    = document.getElementById('owner');
+        const $repo     = document.getElementById('repo');
+        const $branch   = document.getElementById('branch');
+        const $token    = document.getElementById('token');
+        const $loadBtn  = document.getElementById('loadBtn');
+        const $fileList = document.getElementById('fileList');
+        const $breadcrumb = document.getElementById('breadcrumb');
+        const $rateHint = document.getElementById('rateHint');
+
+        // ---------- 工具函数 ----------
+        function apiBase() {
+            return `https://api.github.com/repos/${encodeURIComponent(state.owner)}/${encodeURIComponent(state.repo)}`;
+        }
+
+        function headers() {
+            const h = { 'Accept': 'application/vnd.github.v3+json' };
+            if (state.token.trim()) {
+                h['Authorization'] = `Bearer ${state.token.trim()}`;
+            }
+            return h;
+        }
+
+        function formatSize(bytes) {
+            if (bytes == null) return '';
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / 1024 / 1024).toFixed(1) + ' MB';
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        /** 构建 jsDelivr 下载链接 */
+        function jsdelivrUrl(path) {
+            const branch = state.branch || 'main'; // 默认 main；若自动检测到其他分支，调用前需更新 state.branch
+            return `https://cdn.jsdelivr.net/gh/${encodeURIComponent(state.owner)}/${encodeURIComponent(state.repo)}@${encodeURIComponent(branch)}/${path.split('/').map(encodeURIComponent).join('/')}`;
+        }
+
+        /** 构建 GitHub raw 下载链接（优先使用 API 返回的 download_url） */
+        function rawUrl(item) {
+            return item.download_url || `https://raw.githubusercontent.com/${state.owner}/${state.repo}/${state.branch || 'main'}/${item.path.split('/').map(encodeURIComponent).join('/')}`;
+        }
+
+        // ---------- 分支自动检测 ----------
+        async function resolveBranch() {
+            if (state.branch.trim()) return state.branch.trim();
+            try {
+                const res = await fetch(`${apiBase()}`, { headers: headers() });
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+                return data.default_branch || 'main';
+            } catch (e) {
+                console.warn('自动检测默认分支失败，回退到 main:', e);
+                return 'main';
+            }
+        }
+
+        // ---------- 面包屑 ----------
+        function renderBreadcrumb() {
+            const parts = state.currentPath ? state.currentPath.split('/') : [];
+            let html = `<span class="crumb" data-path="">🏠 根目录</span>`;
+            let accumulated = '';
+            parts.forEach((part, i) => {
+                accumulated += (accumulated ? '/' : '') + part;
+                const isLast = i === parts.length - 1;
+                html += ` <span class="sep">/</span> `;
+                if (isLast) {
+                    html += `<span class="current">${escapeHtml(part)}</span>`;
+                } else {
+                    html += `<span class="crumb" data-path="${escapeHtml(accumulated)}">${escapeHtml(part)}</span>`;
+                }
+            });
+            $breadcrumb.innerHTML = html;
+
+            $breadcrumb.querySelectorAll('.crumb').forEach(el => {
+                el.addEventListener('click', () => {
+                    const target = el.getAttribute('data-path') || '';
+                    navigateTo(target);
+                });
+            });
+        }
+
+        // ---------- 文件列表渲染 ----------
+        function renderFileList(items) {
+            if (!items || items.length === 0) {
+                $fileList.innerHTML = '<div class="status">📭 当前文件夹为空</div>';
+                return;
+            }
+
+            // 文件夹在前，文件在后
+            const dirs  = items.filter(i => i.type === 'dir').sort((a, b) => a.name.localeCompare(b.name));
+            const files = items.filter(i => i.type === 'file').sort((a, b) => a.name.localeCompare(b.name));
+            const sorted = [...dirs, ...files];
+
+            let html = '';
+            for (const item of sorted) {
+                const isDir = item.type === 'dir';
+                const icon  = isDir ? '📁' : fileIcon(item.name);
+                const size  = isDir ? '' : formatSize(item.size);
+
+                if (isDir) {
+                    html += `
+                        <div class="file-item dir" data-type="dir" data-path="${escapeHtml(item.path)}">
+                            <span class="icon">${icon}</span>
+                            <span class="name">${escapeHtml(item.name)}</span>
+                            <span class="size"></span>
+                            <span class="actions"></span>
+                        </div>`;
+                } else {
+                    const dl = rawUrl(item);
+                    const cdn = jsdelivrUrl(item.path);
+                    html += `
+                        <div class="file-item" data-type="file" data-path="${escapeHtml(item.path)}">
+                            <span class="icon">${icon}</span>
+                            <span class="name" title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</span>
+                            <span class="size">${size}</span>
+                            <span class="actions">
+                                <a class="btn" href="${dl}" download="${escapeHtml(item.name)}" target="_blank" rel="noopener">下载</a>
+                                <a class="btn btn-outline" href="${cdn}" target="_blank" rel="noopener" title="通过 jsDelivr CDN 下载">CDN</a>
+                            </span>
+                        </div>`;
+                }
+            }
+
+            $fileList.innerHTML = html;
+
+            // 文件夹点击事件
+            $fileList.querySelectorAll('.file-item.dir').forEach(el => {
+                el.addEventListener('click', () => {
+                    const path = el.getAttribute('data-path');
+                    if (path) navigateTo(path);
+                });
+            });
+        }
+
+        /** 根据扩展名返回图标 */
+        function fileIcon(name) {
+            const ext = (name.split('.').pop() || '').toLowerCase();
+            const map = {
+                js: '🟨', mjs: '🟨', cjs: '🟨', jsx: '🟨',
+                ts: '🟦', tsx: '🟦',
+                py: '🐍', rb: '💎', go: '🔷', rs: '🦀',
+                java: '☕', kt: '🟣', swift: '🕊️',
+                html: '🌐', htm: '🌐', css: '🎨', scss: '🎨', less: '🎨',
+                json: '📋', yaml: '📋', yml: '📋', toml: '📋', xml: '📋',
+                md: '📝', txt: '📄', rst: '📝',
+                png: '🖼️', jpg: '🖼️', jpeg: '🖼️', gif: '🖼️', svg: '🖼️', webp: '🖼️', ico: '🖼️',
+                pdf: '📕', zip: '📦', tar: '📦', gz: '📦', rar: '📦', '7z': '📦',
+                sh: '⚙️', bash: '⚙️', zsh: '⚙️', ps1: '⚙️', bat: '⚙️',
+                lock: '🔒', gitignore: '🚫', dockerfile: '🐳',
+            };
+            return map[ext] || '📄';
+        }
+
+        // ---------- 导航 ----------
+        async function navigateTo(path) {
+            if (state.loading) return;
+
+            state.currentPath = path;
+            renderBreadcrumb();
+            $fileList.innerHTML = '<div class="status"><span class="loading-spinner"></span>加载中…</div>';
+
+            // 自动检测分支（首次导航时）
+            if (!state.branch) {
+                state.branch = await resolveBranch();
+            }
+
+            try {
+                const url = `${apiBase()}/contents/${path.split('/').map(encodeURIComponent).join('/')}`;
+                const res = await fetch(url, { headers: headers() });
+
+                if (!res.ok) {
+                    const errBody = await res.text().catch(() => '');
+                    throw new Error(`GitHub API ${res.status}${errBody ? ': ' + errBody.slice(0, 200) : ''}`);
+                }
+
+                const data = await res.json();
+                const items = Array.isArray(data) ? data : [data]; // 某些情况下返回单个文件对象
+                renderFileList(items);
+
+                // 更新速率限制提示
+                const remaining = res.headers.get('X-RateLimit-Remaining');
+                if (remaining !== null) {
+                    $rateHint.textContent = `API 剩余请求：${remaining}`;
+                }
+            } catch (err) {
+                $fileList.innerHTML = `<div class="status error">❌ 加载失败：${escapeHtml(err.message)}</div>`;
+                console.error(err);
+            }
+        }
+
+        // ---------- 加载入口 ----------
+        async function loadRepo() {
+            state.owner   = $owner.value.trim();
+            state.repo    = $repo.value.trim();
+            state.branch  = $branch.value.trim();
+            state.token   = $token.value.trim();
+
+            if (!state.owner || !state.repo) {
+                $fileList.innerHTML = '<div class="status error">⚠️ 请填写仓库所有者和仓库名称</div>';
+                return;
+            }
+
+            $loadBtn.disabled = true;
+            $loadBtn.textContent = '加载中…';
+            $rateHint.textContent = '';
+
+            try {
+                await navigateTo(''); // 从根目录开始
+            } finally {
+                $loadBtn.disabled = false;
+                $loadBtn.textContent = '🔍 加载仓库';
+            }
+        }
+
+        // ---------- 事件绑定 ----------
+        $loadBtn.addEventListener('click', loadRepo);
+
+        // 回车快捷加载
+        [$owner, $repo, $branch, $token].forEach(el => {
+            el.addEventListener('keydown', e => {
+                if (e.key === 'Enter') loadRepo();
+            });
+        });
+
+        // 可选：从 URL 参数自动填入（方便分享）
+        // 例如 ?owner=facebook&repo=react
+        const params = new URLSearchParams(location.search);
+        if (params.has('owner')) $owner.value = params.get('owner');
+        if (params.has('repo'))  $repo.value  = params.get('repo');
+        if (params.has('branch')) $branch.value = params.get('branch');
+    })();
+    </script>
+</body>
+</html>
